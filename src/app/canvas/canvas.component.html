@@ -1,0 +1,41 @@
+<section class="drawing-board" #canvasContainer>
+  <div class="column">
+    <ul class="size">
+      <li class="size-content">
+        <span>Width:</span>
+        <input
+          type="number"
+          placeholder="width"
+          [(ngModel)]="canvasWidth"
+          (input)="updateCanvasSize()"
+        />
+      </li>
+      <li class="size-content">
+        <span>Height:</span>
+        <input
+          type="number"
+          placeholder="height"
+          [(ngModel)]="canvasHeight"
+          (input)="updateCanvasSize()"
+        />
+      </li>
+    </ul>
+    <div class="actions">
+      <button
+        (click)="undo()"
+        [ngClass]="{'disabled-button': undoStack.length === 0}"
+        class="action-content"
+      >
+        <img src="../../assets/icons/undo.png" alt="undo" />
+      </button>
+      <button
+        (click)="redo()"
+        [ngClass]="{'disabled-button': redoStack.length === 0}"
+        class="action-content"
+      >
+        <img src="../../assets/icons/redo.png" alt="redo" />
+      </button>
+    </div>
+  </div>
+  <canvas #canvas></canvas>
+</section>

@@ -1,0 +1,70 @@
+.drawing-board {
+  background-color: #f5efe7;
+  padding: 0 40px 40px;
+}
+
+.column {
+  display: flex;
+}
+
+.size {
+  display: flex;
+
+  li {
+    list-style: none;
+  }
+}
+
+.size-content {
+  padding: 10px;
+
+  span {
+    margin-right: 8px;
+  }
+
+  input {
+    width: 80px;
+    padding: 2px 4px 2px 5px;
+    border-radius: 8px;
+  }
+}
+
+.actions {
+  display: flex;
+  justify-content: space-between;
+  border-left: 0.5px solid #000;
+  padding: 0 10px;
+  button {
+    border: none;
+  }
+}
+
+.action-content:hover img {
+  filter: invert(17%) sepia(90%) saturate(3000%) hue-rotate(900deg)
+    brightness(100%) contrast(100%);
+}
+
+.action-content {
+  padding: 8px;
+  border-radius: 99px;
+  height: 44px;
+  cursor: pointer;
+  img {
+    width: 28px;
+    height: 28px;
+  }
+}
+
+.disabled-button {
+  pointer-events: none;
+  opacity: 0.5;
+}
+
+
+canvas {
+  cursor: crosshair;
+  // margin:0 40px 40px 0;
+  margin-right: 40px;
+  box-shadow: 0 10px 15px -3px rgba(0, 0, 0, 0.1),
+    0 4px 6px -2px rgba(0, 0, 0, 0.05);
+}
