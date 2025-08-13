@@ -1,207 +1,25 @@
 .container {
+  display: flex;
+  width: 100vw;
+  height: 100vh;
+  flex-direction: column;
+  padding: 0;
+  box-sizing: border-box;
+  position: relative;
+  overflow: hidden;
+
+  app-canvas {
+    flex: 1;
     display: flex;
-    width: 100vw;
     flex-direction: column;
-    background-color: #F5EFE7;
-
-    app-canvas {
-      background-color: #fff;
-    }
-  }
-  
-  .tools-board {
-    height: 200px;
-    background-color: #fff;
-    width: 100%;
-    border-radius: 7px;
-    margin-bottom: 20px;
-    display: flex;
-    padding: 15px 40px;
-    box-shadow: 0 10px 15px -3px rgba(0, 0, 0, 0.1),
-      0 4px 6px -2px rgba(0, 0, 0, 0.05);
-  }
-  
-  .tools-board .column {
-    margin-bottom: 20px;
-    padding-right: 20px;
-  }
-  
-  .grid-tool {
-    display: grid;
-    grid-template-columns: repeat(2, 1fr);
-    gap: 10px;
-    grid-auto-rows: minmax(20px, auto);
-    // width: 210px;
-    height: 100%;
-
-    .tool{
-      width: 100%;
-    }
-  }
-  
-  .column .options {
-    list-style: none;
-    margin: 10px 0 0 5px;
-    height: 25px;
-  }
-  
-  .column .options .option {
-    display: flex;
-    cursor: pointer;
-    align-items: center;
-    margin-bottom: 10px;
-  }
-  
-  .option:is(:hover, .active) img {
-    filter: invert(17%) sepia(90%) saturate(3000%) hue-rotate(900deg)
-      brightness(100%) contrast(100%);
-  }
-  
-  .option :where(span, label) {
-    color: #5a6168;
-    cursor: pointer;
-    padding-left: 10px;
-  }
-  
-  .option:is(:hover, .active) :where(span, label) {
-    color: #4a98f7;
-  }
-  
-  .option #fill-color {
-    cursor: pointer;
-    height: 14px;
-    width: 14px;
-  }
-  
-  #fill-color:checked ~ label {
-    color: #4a98f7;
-  }
-  
-  .option #size-slider {
-    width: 100%;
-    height: 5px;
-    margin-top: 10px;
-  }
-  
-  .colors .options {
-  }
-  
-  .grid-color {
-    display: grid;
-    grid-template-columns: repeat(5, 1fr);
-    gap: 10px;
-    grid-auto-rows: minmax(20px, auto);
-  }
-  
-  .colors .option {
-    height: 20px;
-    width: 20px;
-    border-radius: 99px;
-    margin-top: 3px;
     position: relative;
   }
-  
-  .colors .option:nth-child(1) {
-    background-color: #fff;
-    border: 1px solid #bfbfbf;
-  }
-  .colors .option:nth-child(2) {
-    background-color: #000;
-  }
-  .colors .option:nth-child(3) {
-    background-color: grey;
-  }
-  .colors .option:nth-child(4) {
-    background-color: brown;
-  }
-  .colors .option:nth-child(5) {
-    background-color: pink;
-  }
-  .colors .option:nth-child(6) {
-    background-color: red;
-  }
-  .colors .option:nth-child(7) {
-    background-color: orange;
-  }
-  .colors .option:nth-child(8) {
-    background-color: yellow;
-  }
-  .colors .option:nth-child(9) {
-    background-color: green;
-  }
-  .colors .option:nth-child(10) {
-    background-color: #4a98f7;
-  }
-  .colors .option:nth-child(11) {
-    background-color: blue;
-  }
-  .colors .option:nth-child(12) {
-    background-color: purple;
-  }
-  .colors .option:nth-child(13) {
-    background-color: #f5efe7;
-  }
-  .colors .option:nth-child(14) {
-    background-color: #f5efe7;
-  }
-  .colors .option:nth-child(15) {
-    background-color: #f5efe7;
-  }
-  
-  .colors .option.selected::before {
-    position: absolute;
-    content: "";
-    top: 50%;
+
+  app-toolbar {
+    position: fixed;
+    bottom: 20px;
     left: 50%;
-    height: 12px;
-    width: 12px;
-    background: inherit;
-    border-radius: inherit;
-    border: 2px solid #fff;
-    transform: translate(-50%, -50%);
+    transform: translateX(-50%);
+    z-index: 1000;
   }
-  
-  .colors .option:first-child.selected::before {
-    border-color: #ccc;
-  }
-  
-  .option .color-picker {
-    opacity: 0;
-    cursor: pointer;
-  }
-  
-  .buttons button {
-    width: 80%;
-    color: #fff;
-    border: none;
-    outline: none;
-    padding: 11px 0;
-    font-size: 0.9rem;
-    margin: 16px;
-    background: none;
-    border-radius: 4px;
-    cursor: pointer;
-  }
-  
-  .buttons {
-    display: flex;
-    justify-content: center;
-    flex-direction: column;
-    align-items: center;
-  }
-  
-  .buttons .clear-canvas {
-    color: #6c757d;
-    border: 1px solid #6c757d;
-    transition: all 0.3s ease;
-    &:hover {
-      color: #fff;
-      background: #6c757d;
-    }
-  }
-  
-  .buttons .save-img {
-    background: #4a98f7;
-    border: 1px solid #4a98f7;
-  }
-  
+}

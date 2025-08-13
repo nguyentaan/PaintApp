@@ -1,0 +1,137 @@
+<div class="canvas-controls">
+  <!-- Canvas Size Controls -->
+  <div class="controls-section">
+    <div class="size-controls">
+      <div class="size-input-group">
+        <label class="input-label">W:</label>
+        <div class="input-wrapper">
+          <input
+            type="number"
+            class="size-input"
+            [(ngModel)]="canvasWidth"
+            (input)="onWidthChange()"
+            min="100"
+            max="4000"
+            step="10"
+          />
+          <span class="input-unit">px</span>
+        </div>
+      </div>
+      <div class="size-separator">×</div>
+      <div class="size-input-group">
+        <label class="input-label">H:</label>
+        <div class="input-wrapper">
+          <input
+            type="number"
+            class="size-input"
+            [(ngModel)]="canvasHeight"
+            (input)="onHeightChange()"
+            min="100"
+            max="4000"
+            step="10"
+          />
+          <span class="input-unit">px</span>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- Quick Size Presets -->
+  <div class="controls-section">
+    <div class="preset-sizes">
+      <button
+        class="preset-btn"
+        (click)="setScreenSize()"
+        [class.active]="isScreenSize()">
+        Screen
+      </button>
+      <button
+        class="preset-btn"
+        (click)="setCanvasSize(1920, 1080)"
+        [class.active]="canvasWidth === 1920 && canvasHeight === 1080">
+        HD
+      </button>
+      <button
+        class="preset-btn"
+        (click)="setCanvasSize(1080, 1080)"
+        [class.active]="canvasWidth === 1080 && canvasHeight === 1080">
+        SQ
+      </button>
+      <button
+        class="preset-btn"
+        (click)="setCanvasSize(800, 600)"
+        [class.active]="canvasWidth === 800 && canvasHeight === 600">
+        4:3
+      </button>
+    </div>
+  </div>
+
+  <!-- History Actions -->
+  <div class="controls-section">
+    <div class="history-actions">
+      <button
+        (click)="onUndo()"
+        [disabled]="!canUndo"
+        class="history-btn undo-btn"
+        [attr.aria-label]="'Undo' + (canUndo ? '' : ' (disabled)')">
+        <img src="../../../assets/icons/undo.png" alt="undo" />
+        <span class="btn-label">Undo</span>
+      </button>
+      <button
+        (click)="onRedo()"
+        [disabled]="!canRedo"
+        class="history-btn redo-btn"
+        [attr.aria-label]="'Redo' + (canRedo ? '' : ' (disabled)')">
+        <img src="../../../assets/icons/redo.png" alt="redo" />
+        <span class="btn-label">Redo</span>
+      </button>
+    </div>
+  </div>
+
+  <!-- Zoom Controls -->
+  <div class="controls-section">
+    <div class="zoom-controls">
+      <button
+        (click)="onZoomOut()"
+        class="zoom-btn"
+        [disabled]="zoomLevel <= 25"
+        title="Zoom Out">
+        <span class="zoom-icon">−</span>
+      </button>
+      <div class="zoom-display">{{ getZoomDisplay() }}</div>
+      <button
+        (click)="onZoomIn()"
+        class="zoom-btn"
+        [disabled]="zoomLevel >= 500"
+        title="Zoom In">
+        <span class="zoom-icon">+</span>
+      </button>
+      <button
+        (click)="onZoomReset()"
+        class="zoom-reset-btn"
+        title="Reset Zoom & Position">
+        <span class="zoom-reset-text">Reset</span>
+      </button>
+    </div>
+  </div>
+
+  <!-- Movement Controls -->
+  <div class="controls-section">
+    <div class="pan-controls">
+      <button
+        (click)="onTogglePanMode()"
+        class="pan-toggle-btn"
+        [class.active]="isPanMode"
+        title="Toggle Pan Mode (Space)">
+        <span class="pan-icon">{{ getPanModeIcon() }}</span>
+      </button>
+      <button
+        (click)="onCenterCanvas()"
+        class="center-btn"
+        title="Center Canvas">
+        <span class="center-icon">⌖</span>
+        <span class="center-label">Center</span>
+      </button>
+    </div>
+  </div>
+</div>
