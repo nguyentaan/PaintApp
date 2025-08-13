@@ -8,6 +8,7 @@ it is made by Angular.
 
 ## In my app there are following basic features of a drawing app
 
-![image](https://github.com/nguyentaan/PaintApp/assets/101977467/9b0cfd49-9318-4f08-93d6-5f00f6694d2b)
+![image](<img width="1846" height="1030" alt="image" src="https://github.com/user-attachments/assets/b00c7f13-c6ac-4df8-9ede-19cbea7c006f" />
+)
 
 
