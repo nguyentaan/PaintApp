@@ -209,6 +209,14 @@ export class CanvasComponent implements OnInit {
     const imageData = context.getImageData(0, 0, canvas.width, canvas.height);
     this.drawingService.saveState(imageData);
 
+    // Handle fill tool immediately on mouse down
+    if (this.selectedTool === 'fill') {
+      const fillColor = this.floodFillService.parseColorToRgba(this.selectedColor);
+      this.floodFillService.floodFill(context, this.startX(), this.startY(), fillColor);
+      this.isDrawing.set(false); // Don't continue drawing for fill tool
+      return;
+    }
+
     context.beginPath();
     context.lineWidth = this.brushWidth;
     context.strokeStyle = this.selectedColor;
@@ -241,8 +249,8 @@ export class CanvasComponent implements OnInit {
         this.shapeDrawingService.drawEraser(context, e.offsetX, e.offsetY, this.brushWidth);
         break;
       case 'fill':
-        const fillColor = this.floodFillService.parseColorToRgba(this.selectedColor);
-        this.floodFillService.floodFill(context, this.startX(), this.startY(), fillColor);
+        // Fill tool should only execute once on mouse down, not on mouse move
+        // So we skip it here in the drawing method
         break;
       case 'line':
         this.shapeDrawingService.drawLine(context, this.startX(), this.startY(), e.offsetX, e.offsetY, this.selectedColor, this.brushWidth);

@@ -193,17 +193,6 @@
   border-color: #6366f1;
   box-shadow: 0 0 0 2px rgba(99, 102, 241, 0.3);
 }
-.color-btn.selected::after {
-  content: "✓";
-  position: absolute;
-  inset: 0;
-  display: flex;
-  align-items: center;
-  justify-content: center;
-  color: #fff;
-  font-size: 10px;
-  font-weight: 700;
-}
 .custom-color-wrapper {
   position: relative;
   display: flex;

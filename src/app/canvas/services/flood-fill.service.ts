@@ -1,11 +1,10 @@
 import { Injectable } from '@angular/core';
 
 @Injectable({
-  providedIn: 'root'
+  providedIn: 'root',
 })
 export class FloodFillService {
-
-  constructor() { }
+  constructor() {}
 
   floodFill(
     context: CanvasRenderingContext2D,
@@ -33,13 +32,28 @@ export class FloodFillService {
     const targetA = data[startIndex + 3];
 
     // If target and fill colors are the same, no need to fill
-    if (targetR === fillColor[0] && targetG === fillColor[1] &&
-        targetB === fillColor[2] && targetA === fillColor[3]) {
+    if (
+      targetR === fillColor[0] &&
+      targetG === fillColor[1] &&
+      targetB === fillColor[2] &&
+      targetA === fillColor[3]
+    ) {
       return;
     }
 
-    this.fastFloodFill(data, width, height, startX, startY,
-                      targetR, targetG, targetB, targetA, fillColor);
+    this.fastFloodFill(
+      data,
+      width,
+      height,
+      startX,
+      startY,
+      targetR,
+      targetG,
+      targetB,
+      targetA,
+      fillColor
+    );
+
     context.putImageData(imageData, 0, 0);
   }
 
@@ -55,83 +69,72 @@ export class FloodFillService {
     targetA: number,
     fillColor: number[]
   ): void {
-    // Simple and fast queue with pre-allocated size
-    const pixelStack = new Uint32Array(width * height);
-    let stackPointer = 0;
-
-    // Add starting pixel
-    pixelStack[stackPointer++] = startY * width + startX;
-
-    // Track visited pixels efficiently
-    const visited = new Uint8Array(width * height);
-
     const fillR = fillColor[0];
     const fillG = fillColor[1];
     const fillB = fillColor[2];
     const fillA = fillColor[3];
 
-    while (stackPointer > 0) {
-      const pixelPos = pixelStack[--stackPointer];
-      const y = Math.floor(pixelPos / width);
-      const x = pixelPos % width;
+    // Optimized inline functions for better performance
+    const matchesTarget = (x: number, y: number): boolean => {
+      const idx = (y * width + x) * 4;
+      return (
+        data[idx] === targetR &&
+        data[idx + 1] === targetG &&
+        data[idx + 2] === targetB &&
+        data[idx + 3] === targetA
+      );
+    };
 
-      // Skip if out of bounds or already visited
-      if (x < 0 || x >= width || y < 0 || y >= height || visited[pixelPos]) {
+    const fillPixel = (x: number, y: number): void => {
+      const idx = (y * width + x) * 4;
+      data[idx] = fillR;
+      data[idx + 1] = fillG;
+      data[idx + 2] = fillB;
+      data[idx + 3] = fillA;
+    };
+
+    // Use a more efficient stack-based approach
+    const stack: number[] = [startX, startY];
+
+    while (stack.length > 0) {
+      const y = stack.pop()!;
+      const x = stack.pop()!;
+
+      if (x < 0 || x >= width || y < 0 || y >= height || !matchesTarget(x, y)) {
         continue;
       }
 
-      const dataIndex = pixelPos * 4;
+      // Find the leftmost and rightmost boundaries of the current row
+      let left = x;
+      let right = x;
 
-      // Check if this pixel matches target color
-      if (data[dataIndex] !== targetR || data[dataIndex + 1] !== targetG ||
-          data[dataIndex + 2] !== targetB || data[dataIndex + 3] !== targetA) {
-        continue;
+      // Move left to find the edge
+      while (left > 0 && matchesTarget(left - 1, y)) {
+        left--;
       }
 
-      // Mark as visited
-      visited[pixelPos] = 1;
+      // Move right to find the edge
+      while (right < width - 1 && matchesTarget(right + 1, y)) {
+        right++;
+      }
 
-      // Fill the pixel
-      data[dataIndex] = fillR;
-      data[dataIndex + 1] = fillG;
-      data[dataIndex + 2] = fillB;
-      data[dataIndex + 3] = fillA;
+      // Fill the entire horizontal line
+      for (let i = left; i <= right; i++) {
+        fillPixel(i, y);
+      }
 
-      // Add neighbors to stack (only if not visited and in bounds)
-      // Left
-      if (x > 0 && !visited[pixelPos - 1]) {
-        pixelStack[stackPointer++] = pixelPos - 1;
-      }
-      // Right
-      if (x < width - 1 && !visited[pixelPos + 1]) {
-        pixelStack[stackPointer++] = pixelPos + 1;
-      }
-      // Up
-      if (y > 0 && !visited[pixelPos - width]) {
-        pixelStack[stackPointer++] = pixelPos - width;
-      }
-      // Down
-      if (y < height - 1 && !visited[pixelPos + width]) {
-        pixelStack[stackPointer++] = pixelPos + width;
+      // Check above and below for pixels to fill
+      for (let i = left; i <= right; i++) {
+        // Check pixel above
+        if (y > 0 && matchesTarget(i, y - 1)) {
+          stack.push(i, y - 1);
+        }
+        // Check pixel below
+        if (y < height - 1 && matchesTarget(i, y + 1)) {
+          stack.push(i, y + 1);
+        }
       }
     }
-  }
-
-  private getPixel(imageData: ImageData, x: number, y: number): number[] {
-    const index = (y * imageData.width + x) * 4;
-    return [
-      imageData.data[index],     // Red component
-      imageData.data[index + 1], // Green component
-      imageData.data[index + 2], // Blue component
-      imageData.data[index + 3], // Alpha component
-    ];
-  }
-
-  private colorsMatch(color1: number[], color2: number[]): boolean {
-    return color1[0] === color2[0] &&
-      color1[1] === color2[1] &&
-      color1[2] === color2[2] &&
-      color1[3] === color2[3];
   }
 
   parseColorToRgba(colorString: string): number[] {
@@ -153,34 +156,30 @@ export class FloodFillService {
       }
     }
 
-    // Handle rgb() format
-    const rgbMatch = colorString.match(/^rgb\((\d+),\s*(\d+),\s*(\d+)\)$/);
-    if (rgbMatch) {
-      const red = parseInt(rgbMatch[1], 10);
-      const green = parseInt(rgbMatch[2], 10);
-      const blue = parseInt(rgbMatch[3], 10);
-
-      if (!isNaN(red) && !isNaN(green) && !isNaN(blue) &&
-          red >= 0 && red <= 255 &&
-          green >= 0 && green <= 255 &&
-          blue >= 0 && blue <= 255) {
-        return [red, green, blue, 255];
-      }
-    }
-
     // Handle rgba() format
-    const rgbaMatch = colorString.match(/^rgba\((\d+),\s*(\d+),\s*(\d+),\s*([\d.]+)\)$/);
+    const rgbaMatch = colorString.match(
+      /^rgba\((\d+),\s*(\d+),\s*(\d+),\s*([\d.]+)\)$/
+    );
     if (rgbaMatch) {
       const red = parseInt(rgbaMatch[1], 10);
       const green = parseInt(rgbaMatch[2], 10);
       const blue = parseInt(rgbaMatch[3], 10);
       const alpha = Math.round(parseFloat(rgbaMatch[4]) * 255);
 
-      if (!isNaN(red) && !isNaN(green) && !isNaN(blue) && !isNaN(alpha) &&
-          red >= 0 && red <= 255 &&
-          green >= 0 && green <= 255 &&
-          blue >= 0 && blue <= 255 &&
-          alpha >= 0 && alpha <= 255) {
+      if (
+        !isNaN(red) &&
+        !isNaN(green) &&
+        !isNaN(blue) &&
+        !isNaN(alpha) &&
+        red >= 0 &&
+        red <= 255 &&
+        green >= 0 &&
+        green <= 255 &&
+        blue >= 0 &&
+        blue <= 255 &&
+        alpha >= 0 &&
+        alpha <= 255
+      ) {
         return [red, green, blue, alpha];
       }
     }
