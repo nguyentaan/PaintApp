@@ -1,9 +1,10 @@
 import { Component, Input, Output, EventEmitter } from '@angular/core';
 
 @Component({
-  selector: 'app-canvas-controls',
-  templateUrl: './canvas-controls.component.html',
-  styleUrls: ['./canvas-controls.component.scss']
+    selector: 'app-canvas-controls',
+    templateUrl: './canvas-controls.component.html',
+    styleUrls: ['./canvas-controls.component.scss'],
+    standalone: false
 })
 export class CanvasControlsComponent {
   @Input() canvasWidth: number = this.getDefaultWidth();

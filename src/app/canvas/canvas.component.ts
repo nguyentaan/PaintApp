@@ -4,9 +4,10 @@ import { ShapeDrawingService } from './services/shape-drawing.service';
 import { FloodFillService } from './services/flood-fill.service';
 
 @Component({
-  selector: 'app-canvas',
-  templateUrl: './canvas.component.html',
-  styleUrls: ['./canvas.component.scss']
+    selector: 'app-canvas',
+    templateUrl: './canvas.component.html',
+    styleUrls: ['./canvas.component.scss'],
+    standalone: false
 })
 export class CanvasComponent implements OnInit {
   @ViewChild('canvas', { static: true }) myCanvas!: ElementRef<HTMLCanvasElement>;
