@@ -9,7 +9,8 @@
     (brushWidthChange)="onBrushWidthChange($event)"
     (fillToggle)="onFillToggle($event)"
     (clearCanvas)="clearCanvas()"
-    (saveCanvas)="saveCanvasImg()">
+    (saveCanvas)="saveCanvasImg()"
+  >
   </app-toolbar>
 
   <app-canvas
@@ -17,6 +18,7 @@
     [checked]="isChecked"
     [selectedTool]="selectedTool"
     [selectedColor]="selectedColor"
-    #canvascomponent>
+    #canvascomponent
+  >
   </app-canvas>
 </div>
