@@ -1,9 +1,9 @@
 <div class="container">
   <app-toolbar
-    [selectedTool]="selectedTool"
-    [selectedColor]="selectedColor"
-    [brushWidth]="brushWidth"
-    [fillEnabled]="isChecked"
+    [selectedTool]="selectedTool()"
+    [selectedColor]="selectedColor()"
+    [brushWidth]="brushWidth()"
+    [fillEnabled]="isChecked()"
     (toolChange)="onToolChange($event)"
     (colorChange)="onColorChange($event)"
     (brushWidthChange)="onBrushWidthChange($event)"
@@ -14,10 +14,10 @@
   </app-toolbar>
 
   <app-canvas
-    [brushWidth]="brushWidth"
-    [checked]="isChecked"
-    [selectedTool]="selectedTool"
-    [selectedColor]="selectedColor"
+    [brushWidth]="brushWidth()"
+    [checked]="isChecked()"
+    [selectedTool]="selectedTool()"
+    [selectedColor]="selectedColor()"
     #canvascomponent
   >
   </app-canvas>

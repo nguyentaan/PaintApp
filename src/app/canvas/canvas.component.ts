@@ -1,4 +1,4 @@
-import { Component, ElementRef, OnInit, ViewChild, Input, Output, EventEmitter, HostListener } from '@angular/core';
+import { Component, ElementRef, OnInit, ViewChild, Input, Output, EventEmitter, HostListener, signal } from '@angular/core';
 import { DrawingService } from './services/drawing.service';
 import { ShapeDrawingService } from './services/shape-drawing.service';
 import { FloodFillService } from './services/flood-fill.service';
@@ -17,21 +17,21 @@ export class CanvasComponent implements OnInit {
   @Input() selectedColor!: string;
   @Output() clearCanvasEvent: EventEmitter<boolean> = new EventEmitter<boolean>();
 
-  private isDrawing: boolean = false;
-  private startX: number = 0;
-  private startY: number = 0;
+  private isDrawing = signal<boolean>(false);
+  private startX = signal<number>(0);
+  private startY = signal<number>(0);
   private snapshot: ImageData | null = null;
-  canvasWidth: number = this.getDefaultWidth();
-  canvasHeight: number = this.getDefaultHeight();
+  canvasWidth = signal<number>(this.getDefaultWidth());
+  canvasHeight = signal<number>(this.getDefaultHeight());
 
   // Zoom and Pan properties
-  private zoomLevel: number = 1;
-  private panX: number = 0;
-  private panY: number = 0;
-  private isPanMode: boolean = false;
-  private isPanning: boolean = false;
-  private lastPanX: number = 0;
-  private lastPanY: number = 0;
+  private zoomLevel = signal<number>(1);
+  private panX = signal<number>(0);
+  private panY = signal<number>(0);
+  private isPanMode = signal<boolean>(false);
+  private isPanning = signal<boolean>(false);
+  private lastPanX = signal<number>(0);
+  private lastPanY = signal<number>(0);
 
   constructor(
     private drawingService: DrawingService,
@@ -79,8 +79,8 @@ export class CanvasComponent implements OnInit {
 
   public updateCanvasSize(): void {
     const canvas: HTMLCanvasElement = this.myCanvas.nativeElement;
-    canvas.width = this.canvasWidth;
-    canvas.height = this.canvasHeight;
+    canvas.width = this.canvasWidth();
+    canvas.height = this.canvasHeight();
 
     const context = canvas.getContext('2d');
     if (context) {
@@ -123,76 +123,76 @@ export class CanvasComponent implements OnInit {
   }
 
   public onWidthChange(width: number): void {
-    this.canvasWidth = width;
+    this.canvasWidth.set(width);
   }
 
   public onHeightChange(height: number): void {
-    this.canvasHeight = height;
+    this.canvasHeight.set(height);
   }
 
   // Zoom and Pan methods
   public onZoomChange(zoomPercent: number): void {
-    this.zoomLevel = zoomPercent / 100;
+    this.zoomLevel.set(zoomPercent / 100);
     this.applyCanvasTransform();
   }
 
   public onZoomReset(): void {
-    this.zoomLevel = 1;
-    this.panX = 0;
-    this.panY = 0;
+    this.zoomLevel.set(1);
+    this.panX.set(0);
+    this.panY.set(0);
     this.applyCanvasTransform();
   }
 
   public onPanModeToggle(isPanMode: boolean): void {
-    this.isPanMode = isPanMode;
+    this.isPanMode.set(isPanMode);
     const canvas: HTMLCanvasElement = this.myCanvas.nativeElement;
     canvas.style.cursor = isPanMode ? 'grab' : 'crosshair';
   }
 
   public onCenterCanvas(): void {
-    this.panX = 0;
-    this.panY = 0;
+    this.panX.set(0);
+    this.panY.set(0);
     this.applyCanvasTransform();
   }
 
   private applyCanvasTransform(): void {
     const canvas: HTMLCanvasElement = this.myCanvas.nativeElement;
-    canvas.style.transform = `translate(${this.panX}px, ${this.panY}px) scale(${this.zoomLevel})`;
+    canvas.style.transform = `translate(${this.panX()}px, ${this.panY()}px) scale(${this.zoomLevel()})`;
   }
 
   // Pan methods
   private startPan(e: MouseEvent): void {
-    this.isPanning = true;
-    this.lastPanX = e.clientX;
-    this.lastPanY = e.clientY;
+    this.isPanning.set(true);
+    this.lastPanX.set(e.clientX);
+    this.lastPanY.set(e.clientY);
     const canvas: HTMLCanvasElement = this.myCanvas.nativeElement;
     canvas.style.cursor = 'grabbing';
   }
 
   private doPan(e: MouseEvent): void {
-    if (!this.isPanning) return;
+    if (!this.isPanning()) return;
 
-    const deltaX = e.clientX - this.lastPanX;
-    const deltaY = e.clientY - this.lastPanY;
+    const deltaX = e.clientX - this.lastPanX();
+    const deltaY = e.clientY - this.lastPanY();
 
-    this.panX += deltaX;
-    this.panY += deltaY;
+    this.panX.set(this.panX() + deltaX);
+    this.panY.set(this.panY() + deltaY);
 
-    this.lastPanX = e.clientX;
-    this.lastPanY = e.clientY;
+    this.lastPanX.set(e.clientX);
+    this.lastPanY.set(e.clientY);
 
     this.applyCanvasTransform();
   }
 
   private stopPan(): void {
-    this.isPanning = false;
+    this.isPanning.set(false);
     const canvas: HTMLCanvasElement = this.myCanvas.nativeElement;
-    canvas.style.cursor = this.isPanMode ? 'grab' : 'crosshair';
+    canvas.style.cursor = this.isPanMode() ? 'grab' : 'crosshair';
   }
 
   private startDraw(e: MouseEvent): void {
     // Don't start drawing if in pan mode
-    if (this.isPanMode) {
+    if (this.isPanMode()) {
       this.startPan(e);
       return;
     }
@@ -201,9 +201,9 @@ export class CanvasComponent implements OnInit {
     const context = canvas.getContext('2d');
     if (!context) return;
 
-    this.isDrawing = true;
-    this.startX = e.offsetX;
-    this.startY = e.offsetY;
+    this.isDrawing.set(true);
+    this.startX.set(e.offsetX);
+    this.startY.set(e.offsetY);
 
     // Save state for undo functionality
     const imageData = context.getImageData(0, 0, canvas.width, canvas.height);
@@ -218,12 +218,12 @@ export class CanvasComponent implements OnInit {
 
   private drawing(e: MouseEvent): void {
     // Handle panning if in pan mode
-    if (this.isPanMode) {
+    if (this.isPanMode()) {
       this.doPan(e);
       return;
     }
 
-    if (!this.isDrawing) return;
+    if (!this.isDrawing()) return;
     const canvas: HTMLCanvasElement = this.myCanvas.nativeElement;
     const context = canvas.getContext('2d');
     if (!context || !this.snapshot) return;
@@ -242,30 +242,30 @@ export class CanvasComponent implements OnInit {
         break;
       case 'fill':
         const fillColor = this.floodFillService.parseColorToRgba(this.selectedColor);
-        this.floodFillService.floodFill(context, this.startX, this.startY, fillColor);
+        this.floodFillService.floodFill(context, this.startX(), this.startY(), fillColor);
         break;
       case 'line':
-        this.shapeDrawingService.drawLine(context, this.startX, this.startY, e.offsetX, e.offsetY, this.selectedColor, this.brushWidth);
+        this.shapeDrawingService.drawLine(context, this.startX(), this.startY(), e.offsetX, e.offsetY, this.selectedColor, this.brushWidth);
         break;
       case 'rectangle':
-        this.shapeDrawingService.drawRectangle(context, this.startX, this.startY, e.offsetX, e.offsetY, this.selectedColor, this.brushWidth, this.checked);
+        this.shapeDrawingService.drawRectangle(context, this.startX(), this.startY(), e.offsetX, e.offsetY, this.selectedColor, this.brushWidth, this.checked);
         break;
       case 'circle':
-        this.shapeDrawingService.drawCircle(context, this.startX, this.startY, e.offsetX, e.offsetY, this.selectedColor, this.brushWidth, this.checked);
+        this.shapeDrawingService.drawCircle(context, this.startX(), this.startY(), e.offsetX, e.offsetY, this.selectedColor, this.brushWidth, this.checked);
         break;
       case 'triangle':
-        this.shapeDrawingService.drawTriangle(context, this.startX, this.startY, e.offsetX, e.offsetY, this.selectedColor, this.brushWidth, this.checked);
+        this.shapeDrawingService.drawTriangle(context, this.startX(), this.startY(), e.offsetX, e.offsetY, this.selectedColor, this.brushWidth, this.checked);
         break;
       case 'pentagon':
-        this.shapeDrawingService.drawPentagon(context, this.startX, this.startY, e.offsetX, e.offsetY, this.selectedColor, this.brushWidth, this.checked);
+        this.shapeDrawingService.drawPentagon(context, this.startX(), this.startY(), e.offsetX, e.offsetY, this.selectedColor, this.brushWidth, this.checked);
         break;
     }
   }
 
   private stopDraw(): void {
-    this.isDrawing = false;
+    this.isDrawing.set(false);
     // Also stop panning if it was active
-    if (this.isPanning) {
+    if (this.isPanning()) {
       this.stopPan();
     }
   }
