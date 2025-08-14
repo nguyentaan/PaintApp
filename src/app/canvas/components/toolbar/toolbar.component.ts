@@ -1,4 +1,4 @@
-import { Component, Input, Output, EventEmitter, OnInit } from '@angular/core';
+import { Component, Input, Output, EventEmitter, OnInit, signal } from '@angular/core';
 
 export interface ToolbarTool {
   id: string;
@@ -13,9 +13,10 @@ export interface ToolbarColor {
 }
 
 @Component({
-  selector: 'app-toolbar',
-  templateUrl: './toolbar.component.html',
-  styleUrls: ['./toolbar.component.scss']
+    selector: 'app-toolbar',
+    templateUrl: './toolbar.component.html',
+    styleUrls: ['./toolbar.component.scss'],
+    standalone: false
 })
 export class ToolbarComponent implements OnInit {
   @Input() selectedTool: string = 'brush';
@@ -54,13 +55,13 @@ export class ToolbarComponent implements OnInit {
     { value: '#808080', name: 'Gray' }
   ];
 
-  showColorPicker: boolean = false;
-  customColor: string = '#000000';
+  showColorPicker = signal<boolean>(false);
+  customColor = signal<string>('#000000');
 
   constructor() { }
 
   ngOnInit(): void {
-    this.customColor = this.selectedColor;
+    this.customColor.set(this.selectedColor);
   }
 
   onToolSelect(toolId: string): void {
@@ -70,14 +71,14 @@ export class ToolbarComponent implements OnInit {
 
   onColorSelect(color: string): void {
     this.selectedColor = color;
-    this.customColor = color;
+    this.customColor.set(color);
     this.colorChange.emit(color);
-    this.showColorPicker = false;
+    this.showColorPicker.set(false);
   }
 
   onCustomColorChange(color: string): void {
     this.selectedColor = color;
-    this.customColor = color;
+    this.customColor.set(color);
     this.colorChange.emit(color);
   }
 
@@ -100,7 +101,7 @@ export class ToolbarComponent implements OnInit {
   }
 
   toggleColorPicker(): void {
-    this.showColorPicker = !this.showColorPicker;
+    this.showColorPicker.set(!this.showColorPicker());
   }
 
   getDrawingTools(): ToolbarTool[] {

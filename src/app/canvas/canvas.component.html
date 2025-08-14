@@ -1,7 +1,7 @@
 <section class="drawing-board" #canvasContainer>
   <app-canvas-controls
-    [canvasWidth]="canvasWidth"
-    [canvasHeight]="canvasHeight"
+    [canvasWidth]="canvasWidth()"
+    [canvasHeight]="canvasHeight()"
     [canUndo]="canUndo()"
     [canRedo]="canRedo()"
     (widthChange)="onWidthChange($event)"

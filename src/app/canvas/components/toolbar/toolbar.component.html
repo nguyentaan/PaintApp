@@ -4,15 +4,16 @@
     <div class="tool-group">
       <h3 class="group-title">Tools</h3>
       <div class="tools-grid">
-        <button
-          *ngFor="let tool of getDrawingTools()"
-          class="tool-btn"
-          [class.active]="selectedTool === tool.id"
-          (click)="onToolSelect(tool.id)"
-          [attr.aria-label]="tool.name"
-          [title]="tool.name">
-          <img [src]="'assets/icons/' + tool.icon" [alt]="tool.name">
-        </button>
+        @for (tool of getDrawingTools(); track tool) {
+          <button
+            class="tool-btn"
+            [class.active]="selectedTool === tool.id"
+            (click)="onToolSelect(tool.id)"
+            [attr.aria-label]="tool.name"
+            [title]="tool.name">
+            <img [src]="'assets/icons/' + tool.icon" [alt]="tool.name">
+          </button>
+        }
       </div>
     </div>
 
@@ -20,15 +21,16 @@
     <div class="tool-group">
       <h3 class="group-title">Shapes</h3>
       <div class="tools-grid">
-        <button
-          *ngFor="let tool of getShapeTools()"
-          class="tool-btn"
-          [class.active]="selectedTool === tool.id"
-          (click)="onToolSelect(tool.id)"
-          [attr.aria-label]="tool.name"
-          [title]="tool.name">
-          <img [src]="'assets/icons/' + tool.icon" [alt]="tool.name">
-        </button>
+        @for (tool of getShapeTools(); track tool) {
+          <button
+            class="tool-btn"
+            [class.active]="selectedTool === tool.id"
+            (click)="onToolSelect(tool.id)"
+            [attr.aria-label]="tool.name"
+            [title]="tool.name">
+            <img [src]="'assets/icons/' + tool.icon" [alt]="tool.name">
+          </button>
+        }
       </div>
 
       <!-- Fill Toggle -->
@@ -38,81 +40,82 @@
             type="checkbox"
             [checked]="fillEnabled"
             (change)="onFillToggle()">
-          <span class="toggle-slider"></span>
-          <span class="toggle-label">Fill</span>
-        </label>
-      </div>
-    </div>
-  </div>
-
-  <div class="toolbar-section">
-    <!-- Brush Size -->
-    <div class="tool-group">
-      <h3 class="group-title">Size</h3>
-      <div class="size-control">
-        <input
-          type="range"
-          class="size-slider"
-          [value]="brushWidth"
-          (input)="onBrushWidthChange($any($event.target).value)"
-          min="1"
-          max="50">
-        <div class="size-display">{{brushWidth}}px</div>
+            <span class="toggle-slider"></span>
+            <span class="toggle-label">Fill</span>
+          </label>
+        </div>
       </div>
     </div>
 
-    <!-- Colors -->
-    <div class="tool-group">
-      <h3 class="group-title">Colors</h3>
-      <div class="color-section">
-        <div class="current-color"
-             [style.background-color]="selectedColor"
-             (click)="toggleColorPicker()"
-             title="Click to open color picker">
-        </div>
-
-        <div class="color-palette">
-          <button
-            *ngFor="let color of predefinedColors"
-            class="color-btn"
-            [style.background-color]="color.value"
-            [class.selected]="selectedColor === color.value"
-            (click)="onColorSelect(color.value)"
-            [title]="color.name">
-          </button>
-        </div>
-
-        <div class="custom-color-wrapper">
+    <div class="toolbar-section">
+      <!-- Brush Size -->
+      <div class="tool-group">
+        <h3 class="group-title">Size</h3>
+        <div class="size-control">
           <input
-            type="color"
-            class="custom-color-picker"
-            [value]="customColor"
-            (input)="onCustomColorChange($any($event.target).value)"
-            title="Custom Color Picker">
-          <span class="custom-color-label">+</span>
+            type="range"
+            class="size-slider"
+            [value]="brushWidth"
+            (input)="onBrushWidthChange($any($event.target).value)"
+            min="1"
+            max="50">
+            <div class="size-display">{{brushWidth}}px</div>
+          </div>
+        </div>
+
+        <!-- Colors -->
+        <div class="tool-group">
+          <h3 class="group-title">Colors</h3>
+          <div class="color-section">
+            <div class="current-color"
+              [style.background-color]="selectedColor"
+              (click)="toggleColorPicker()"
+              title="Click to open color picker">
+            </div>
+
+            <div class="color-palette">
+              @for (color of predefinedColors; track color) {
+                <button
+                  class="color-btn"
+                  [style.background-color]="color.value"
+                  [class.selected]="selectedColor === color.value"
+                  (click)="onColorSelect(color.value)"
+                  [title]="color.name">
+                </button>
+              }
+            </div>
+
+            <div class="custom-color-wrapper">
+              <input
+                type="color"
+                class="custom-color-picker"
+                [value]="customColor()"
+                (input)="onCustomColorChange($any($event.target).value)"
+                title="Custom Color Picker">
+                <span class="custom-color-label">+</span>
+              </div>
+            </div>
+          </div>
+        </div>
+
+        <div class="toolbar-section">
+          <!-- Action Buttons -->
+          <div class="tool-group">
+            <h3 class="group-title">Actions</h3>
+            <div class="action-buttons">
+              <button
+                class="action-btn secondary"
+                (click)="onClearCanvas()"
+                title="Clear Canvas">
+                <span>Clear</span>
+              </button>
+              <button
+                class="action-btn primary"
+                (click)="onSaveCanvas()"
+                title="Save Image">
+                <span>Save</span>
+              </button>
+            </div>
+          </div>
         </div>
       </div>
-    </div>
-  </div>
-
-  <div class="toolbar-section">
-    <!-- Action Buttons -->
-    <div class="tool-group">
-      <h3 class="group-title">Actions</h3>
-      <div class="action-buttons">
-        <button
-          class="action-btn secondary"
-          (click)="onClearCanvas()"
-          title="Clear Canvas">
-          <span>Clear</span>
-        </button>
-        <button
-          class="action-btn primary"
-          (click)="onSaveCanvas()"
-          title="Save Image">
-          <span>Save</span>
-        </button>
-      </div>
-    </div>
-  </div>
-</div>

@@ -1,22 +1,24 @@
 <div class="container">
   <app-toolbar
-    [selectedTool]="selectedTool"
-    [selectedColor]="selectedColor"
-    [brushWidth]="brushWidth"
-    [fillEnabled]="isChecked"
+    [selectedTool]="selectedTool()"
+    [selectedColor]="selectedColor()"
+    [brushWidth]="brushWidth()"
+    [fillEnabled]="isChecked()"
     (toolChange)="onToolChange($event)"
     (colorChange)="onColorChange($event)"
     (brushWidthChange)="onBrushWidthChange($event)"
     (fillToggle)="onFillToggle($event)"
     (clearCanvas)="clearCanvas()"
-    (saveCanvas)="saveCanvasImg()">
+    (saveCanvas)="saveCanvasImg()"
+  >
   </app-toolbar>
 
   <app-canvas
-    [brushWidth]="brushWidth"
-    [checked]="isChecked"
-    [selectedTool]="selectedTool"
-    [selectedColor]="selectedColor"
-    #canvascomponent>
+    [brushWidth]="brushWidth()"
+    [checked]="isChecked()"
+    [selectedTool]="selectedTool()"
+    [selectedColor]="selectedColor()"
+    #canvascomponent
+  >
   </app-canvas>
 </div>

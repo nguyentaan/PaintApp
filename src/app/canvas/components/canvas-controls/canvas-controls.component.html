@@ -94,7 +94,7 @@
       <button
         (click)="onZoomOut()"
         class="zoom-btn"
-        [disabled]="zoomLevel <= 25"
+        [disabled]="zoomLevel() <= 25"
         title="Zoom Out">
         <span class="zoom-icon">−</span>
       </button>
@@ -102,7 +102,7 @@
       <button
         (click)="onZoomIn()"
         class="zoom-btn"
-        [disabled]="zoomLevel >= 500"
+        [disabled]="zoomLevel() >= 500"
         title="Zoom In">
         <span class="zoom-icon">+</span>
       </button>
@@ -121,9 +121,9 @@
       <button
         (click)="onTogglePanMode()"
         class="pan-toggle-btn"
-        [class.active]="isPanMode"
+        [class.active]="isPanMode()"
         title="Toggle Pan Mode (Space)">
-        <span class="pan-icon">{{ getPanModeIcon() }}</span>
+        <img src="../../../assets/icons/drag_pan.svg" alt="pan" />
       </button>
       <button
         (click)="onCenterCanvas()"

@@ -1,9 +1,10 @@
-import { Component, Input, Output, EventEmitter } from '@angular/core';
+import { Component, Input, Output, EventEmitter, signal } from '@angular/core';
 
 @Component({
-  selector: 'app-canvas-controls',
-  templateUrl: './canvas-controls.component.html',
-  styleUrls: ['./canvas-controls.component.scss']
+    selector: 'app-canvas-controls',
+    templateUrl: './canvas-controls.component.html',
+    styleUrls: ['./canvas-controls.component.scss'],
+    standalone: false
 })
 export class CanvasControlsComponent {
   @Input() canvasWidth: number = this.getDefaultWidth();
@@ -21,10 +22,10 @@ export class CanvasControlsComponent {
   @Output() panModeToggle = new EventEmitter<boolean>();
   @Output() centerCanvas = new EventEmitter<void>();
 
-  zoomLevel: number = 100;
-  canvasX: number = 0;
-  canvasY: number = 0;
-  isPanMode: boolean = false;
+  zoomLevel = signal<number>(100);
+  canvasX = signal<number>(0);
+  canvasY = signal<number>(0);
+  isPanMode = signal<boolean>(false);
 
   constructor() { }
 
@@ -90,40 +91,40 @@ export class CanvasControlsComponent {
 
   // Zoom controls
   onZoomIn(): void {
-    this.zoomLevel = Math.min(500, this.zoomLevel + 25);
-    this.zoomChange.emit(this.zoomLevel);
+    this.zoomLevel.set(Math.min(500, this.zoomLevel() + 25));
+    this.zoomChange.emit(this.zoomLevel());
   }
 
   onZoomOut(): void {
-    this.zoomLevel = Math.max(25, this.zoomLevel - 25);
-    this.zoomChange.emit(this.zoomLevel);
+    this.zoomLevel.set(Math.max(25, this.zoomLevel() - 25));
+    this.zoomChange.emit(this.zoomLevel());
   }
 
   onZoomReset(): void {
-    this.zoomLevel = 100;
-    this.canvasX = 0;
-    this.canvasY = 0;
+    this.zoomLevel.set(100);
+    this.canvasX.set(0);
+    this.canvasY.set(0);
     this.zoomReset.emit();
   }
 
   // Pan mode toggle
   onTogglePanMode(): void {
-    this.isPanMode = !this.isPanMode;
-    this.panModeToggle.emit(this.isPanMode);
+    this.isPanMode.set(!this.isPanMode());
+    this.panModeToggle.emit(this.isPanMode());
   }
 
   onCenterCanvas(): void {
-    this.canvasX = 0;
-    this.canvasY = 0;
+    this.canvasX.set(0);
+    this.canvasY.set(0);
     this.centerCanvas.emit();
   }
 
   // Zoom level display
   getZoomDisplay(): string {
-    return `${this.zoomLevel}%`;
+    return `${this.zoomLevel()}%`;
   }
 
   getPanModeIcon(): string {
-    return this.isPanMode ? '✋' : '👆';
+    return this.isPanMode() ? '✋' : '👆';
   }
 }
