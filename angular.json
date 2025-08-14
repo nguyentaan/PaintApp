@@ -65,10 +65,10 @@
           "builder": "@angular-devkit/build-angular:dev-server",
           "configurations": {
             "production": {
-              "browserTarget": "draw-app:build:production"
+              "buildTarget": "draw-app:build:production"
             },
             "development": {
-              "browserTarget": "draw-app:build:development"
+              "buildTarget": "draw-app:build:development"
             }
           },
           "defaultConfiguration": "development"
@@ -76,7 +76,7 @@
         "extract-i18n": {
           "builder": "@angular-devkit/build-angular:extract-i18n",
           "options": {
-            "browserTarget": "draw-app:build"
+            "buildTarget": "draw-app:build"
           }
         },
         "test": {
