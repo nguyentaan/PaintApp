@@ -89,7 +89,7 @@
               <input
                 type="color"
                 class="custom-color-picker"
-                [value]="customColor"
+                [value]="customColor()"
                 (input)="onCustomColorChange($any($event.target).value)"
                 title="Custom Color Picker">
                 <span class="custom-color-label">+</span>
